@@ -7,7 +7,7 @@ const server = require("../../app");
 chai.use(chaiHttp);
 
 describe("Node Server", () => {
-  it("(GET /) ana sayfayı döndürür", done => {
+  it("(GET /) returns the homepage", done => {
     chai
       .request(server)
       .get("/")
