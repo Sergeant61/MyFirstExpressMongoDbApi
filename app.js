@@ -5,7 +5,7 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 
-const indexRouter = require("./routes/index");
+const userRouter = require("./routes/user");
 const movieRouter = require("./routes/movie");
 const directorRouter = require("./routes/director");
 
@@ -13,6 +13,13 @@ const app = express();
 
 //db connection
 const db = require("./helper/db")();
+
+//config
+const config = require("./config");
+app.set("api_secret_key", config.api_secret_key);
+
+//Middleware
+const verifyToken = require("./middleware/verify-token");
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -24,7 +31,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/", indexRouter);
+app.use("/", userRouter);
+app.use("/api", verifyToken);
 app.use("/api/movies", movieRouter);
 app.use("/api/directors", directorRouter);
 
