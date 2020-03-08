@@ -19,6 +19,34 @@ router.post("/", function(req, res, next) {
     });
 });
 
+//Update
+router.put("/:director_id", (req, res, next) => {
+  const promise = Director.findByIdAndUpdate(req.params.director_id, req.body, {
+    new: true // bu yeni eklenen datayı dönbeyi sağlıyor
+  });
+  promise
+    .then(data => {
+      res.json(data);
+    })
+    .catch(err => {
+      res.json(err);
+    });
+});
+
+//Delete
+router.delete("/:director_id", (req, res, next) => {
+  const promise = Director.findByIdAndRemove(req.params.director_id);
+
+  promise
+    .then(data => {
+      res.json({ status: 1 });
+    })
+    .catch(err => {
+      res.json(err);
+    });
+});
+
+//getAll
 router.get("/", function(req, res, next) {
   const promise = Director.aggregate([
     {
@@ -70,6 +98,7 @@ router.get("/", function(req, res, next) {
     });
 });
 
+//getOnlyOne
 router.get("/:director_id", function(req, res, next) {
   const promise = Director.aggregate([
     {
