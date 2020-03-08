@@ -6,7 +6,22 @@ const Movie = require("../models/Movie");
 
 //getAll
 router.get("/", (req, res, next) => {
-  const promise = Movie.find({});
+  const promise = Movie.aggregate([
+    {
+      $lookup: {
+        from: "directors",
+        localField: "director_id",
+        foreignField: "_id",
+        as: "director"
+      }
+    },
+    {
+      $unwind: {
+        path: "$director",
+        preserveNullAndEmptyArrays: true
+      }
+    }
+  ]);
 
   promise
     .then(data => {
@@ -102,9 +117,9 @@ router.post("/", (req, res, next) => {
 
 // Between
 router.get("/between/:start_year/:end_year", (req, res, next) => {
-  const {start_year , end_year} = req.params;
+  const { start_year, end_year } = req.params;
   const promise = Movie.find({
-      year : { "$gte":parseInt(start_year), "$lte":parseInt(end_year) }
+    year: { $gte: parseInt(start_year), $lte: parseInt(end_year) }
   });
 
   promise
@@ -115,7 +130,5 @@ router.get("/between/:start_year/:end_year", (req, res, next) => {
       res.json(err);
     });
 });
-
-
 
 module.exports = router;
